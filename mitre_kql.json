@@ -1,0 +1,27 @@
+{
+  "T1059": {
+    "name": "Command and Scripting Interpreter",
+    "description": "Adversaries may abuse command and script interpreters to execute commands, scripts, or binaries.",
+    "kql": "SecurityEvent\n| where EventID == 4688 // Process Creation\n| where Process has_any (\"powershell.exe\", \"cmd.exe\", \"bash\", \"sh\")\n| where ProcessCommandLine has_any (\"-enc\", \"-e\", \"-nop\", \"-w hidden\", \"curl\", \"wget\", \"Invoke-WebRequest\")\n| project TimeGenerated, Account, Computer, Process, ProcessCommandLine, NewProcessName\n| sort by TimeGenerated desc"
+  },
+  "T1110": {
+    "name": "Brute Force",
+    "description": "Adversaries may use brute force techniques to gain access to accounts when passwords are unknown or when password hashes are obtained.",
+    "kql": "SigninLogs\n| where ResultType != 0 // Failed logins\n| summarize FailedAttempts = count(), IPAddresses = make_set(IPAddress) by UserPrincipalName, AppDisplayName\n| where FailedAttempts > 10 // Threshold for brute force\n| project TimeGenerated = now(), UserPrincipalName, FailedAttempts, IPAddresses\n| sort by FailedAttempts desc"
+  },
+  "T1078": {
+    "name": "Valid Accounts",
+    "description": "Adversaries may obtain and abuse credentials of existing accounts as a means of gaining Initial Access, Persistence, Privilege Escalation, or Defense Evasion.",
+    "kql": "SigninLogs\n| where ResultType == 0 // Successful login\n| where IPAddress !has \"10.\" and IPAddress !has \"192.168.\" // External IP\n| where UserPrincipalName has_any (\"admin\", \"svc_\", \"backup\") // High-value targets\n| project TimeGenerated, UserPrincipalName, IPAddress, Location, AppDisplayName, RiskState\n| sort by TimeGenerated desc"
+  },
+  "T1566": {
+    "name": "Phishing",
+    "description": "Adversaries may send phishing messages to gain access to victim systems.",
+    "kql": "OfficeActivity\n| where Operation == \"MessageTrace\" or Operation == \"EmailForward\"\n| where RecipientEmailAddress has_any (\"external-domain.com\") // Replace with your external domains\n| project TimeGenerated, UserId, Operation, RecipientEmailAddress, Subject\n| sort by TimeGenerated desc"
+  },
+  "T1003": {
+    "name": "OS Credential Dumping",
+    "description": "Adversaries may attempt to dump credentials to obtain account login and credential material.",
+    "kql": "SecurityEvent\n| where EventID == 4688\n| where ProcessCommandLine has_any (\"mimikatz\", \"procdump\", \"lsass\", \"sekurlsa\")\n| project TimeGenerated, Account, Computer, ProcessCommandLine\n| sort by TimeGenerated desc"
+  }
+}

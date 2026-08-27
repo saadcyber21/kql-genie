@@ -1,0 +1,9 @@
+// MITRE ATT&CK: T1110 - Brute Force
+// Description: Adversaries may use brute force techniques to gain access to accounts when passwords are unknown or when password hashes are obtained.
+
+SigninLogs
+| where ResultType != 0 // Failed logins
+| summarize FailedAttempts = count(), IPAddresses = make_set(IPAddress) by UserPrincipalName, AppDisplayName
+| where FailedAttempts > 10 // Threshold for brute force
+| project TimeGenerated = now(), UserPrincipalName, FailedAttempts, IPAddresses
+| sort by FailedAttempts desc

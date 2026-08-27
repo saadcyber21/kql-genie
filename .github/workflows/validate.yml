@@ -1,0 +1,30 @@
+ 
+name: KQL-Genie Validation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Validate JSON Syntax
+        run: python -m json.tool mitre_kql.json > /dev/null
+
+      - name: Test CLI Execution
+        run: |
+          python main.py --list
+          python main.py --technique T1059
+          python main.py --export T1110
+          cat T1110_hunting_query.kql
