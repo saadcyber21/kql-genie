@@ -3,7 +3,7 @@
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Zero Dependencies](https://img.shields.io/badge/Dependencies-0-brightgreen.svg)](#)
-[![CI/CD Ready](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-orange.svg)](#)
+[![CI](https://github.com/saadcyber21/kql-genie/actions/workflows/validate.yml/badge.svg)](https://github.com/saadcyber21/kql-genie/actions)
 
 > **A zero-dependency, deterministic CLI tool** that instantly generates production-ready Microsoft Sentinel KQL hunting queries mapped directly to MITRE ATT&CK techniques.
 
